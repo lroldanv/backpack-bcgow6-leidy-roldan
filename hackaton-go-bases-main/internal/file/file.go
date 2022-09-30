@@ -29,11 +29,11 @@ func (f *File) ReadTickets() ([]service.Ticket, error) {
 	for _, record := range records {
 
 		Ticket := service.Ticket{}
-		Ticket.Id, err = strconv.Atoi(record[0])
-		if err != nil {
-			return nil, err
-		}
-
+		// Ticket.Id, err = strconv.Atoi(record[0])
+		// if err != nil {
+		// 	return nil, err
+		// }
+		Ticket.Id = record[0]
 		Ticket.Name = record[1]
 		Ticket.Email = record[2]
 		Ticket.Destination = record[3]
