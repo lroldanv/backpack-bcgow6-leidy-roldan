@@ -86,4 +86,7 @@ Temporary Items
 # iCloud generated files
 *.icloud
 
+### dotenv ###
+.env
+
 # End of https://www.toptal.com/developers/gitignore/api/go,visualstudiocode
