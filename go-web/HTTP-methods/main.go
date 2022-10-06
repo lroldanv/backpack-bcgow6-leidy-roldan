@@ -63,6 +63,12 @@ func main() {
 		})
 	})
 
+	// router.GET("/movies/:id", func(c *gin.Context) {
+	//     name := c.Param("id")
+	//     c.String(http.StatusOK, "Movie %s", id)
+	// })
+	// router.Run(":8080")
+
 	// Group routes
 	product := router.Group("/products")
 	{
