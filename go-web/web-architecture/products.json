@@ -1,0 +1,24 @@
+{
+    "products" : [
+        {
+            "id":1,
+            "name":"car",
+            "color":"red",
+            "price":23.9,
+            "stock":2,
+            "code":"c123",
+            "published":true,
+            "createdAt":"2022-10-03T15:28:18.836Z"
+        },
+        {
+            "id":2,
+            "name":"bicycle",
+            "color":"yellos",
+            "precio":3.9,
+            "stock":4,
+            "code":"b123",
+            "published":true,
+            "createdAt":"2022-10-03T15:42:18.836Z"
+        }
+    ]
+}

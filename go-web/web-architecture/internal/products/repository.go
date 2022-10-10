@@ -3,6 +3,8 @@ package products
 import (
 	"fmt"
 	"time"
+
+	"github.com/lroldanv/backpack-bcgow6-leidy-roldan/go-web/web-architecture/pkg/store"
 )
 
 // Product struct
@@ -18,38 +20,61 @@ type Product struct {
 }
 
 // Global variable to store products
-var products = []Product{
-	{ID: 1, Name: "car", Color: "red", Price: 100, Stock: 4, Code: "c123", Published: true},
-	{ID: 1, Name: "bicycle", Color: "red", Price: 100, Stock: 4, Code: "b123", Published: true},
-}
+var products []Product
 
 type Repository interface {
 	GetAll() ([]Product, error)
 	Save(id int, name, color, code string, price float64, stock uint, published bool, createdAt time.Time) (Product, error)
 	Update(id int, name, color, code string, price float64, stock uint, published bool, createdAt time.Time) (Product, error)
 	UpdateName(id int, name string) (Product, error)
-	Delete(id int) (bool, error)
+	Delete(id int) error
 }
 
 // repository struct implements intefaces methods
-type repository struct{}
+type repository struct {
+	db store.Store
+}
 
-func NewRepository() Repository {
-	return &repository{}
+func NewRepository(db store.Store) Repository {
+	return &repository{
+		db: db,
+	}
 }
 
 // Create product
 func (r *repository) Save(id int, name, color, code string, price float64, stock uint, published bool, createdAt time.Time) (Product, error) {
+
+	var products []Product
+
+	err := r.db.Read(&products)
+	if err != nil {
+		return Product{}, err
+	}
+
 	p := Product{id, name, color, price, stock, code, published, createdAt}
 	products = append(products, p)
+	if err := r.db.Write(products); err != nil {
+		return Product{}, err
+	}
 	return p, nil
 }
 
 func (r *repository) GetAll() ([]Product, error) {
+
+	err := r.db.Read(&products)
+	if err != nil {
+		return []Product{}, err
+	}
 	return products, nil
 }
 
 func (r *repository) Update(id int, name, color, code string, price float64, stock uint, published bool, createdAt time.Time) (Product, error) {
+
+	err := r.db.Read(&products)
+	if err != nil {
+		return Product{}, err
+	}
+
 	p := Product{Name: name, Color: color, Price: price, Stock: stock, Code: code, Published: published, CreatedAt: createdAt}
 
 	for i, product := range products {
@@ -59,11 +84,17 @@ func (r *repository) Update(id int, name, color, code string, price float64, sto
 			return p, nil
 		}
 	}
-	return Product{}, fmt.Errorf("Product %d not found", id)
+	return Product{}, fmt.Errorf("Product with id %d not found", id)
 
 }
 
-func (r *repository) Delete(id int) (bool, error) {
+func (r *repository) Delete(id int) error {
+
+	err := r.db.Read(&products)
+	if err != nil {
+		return err
+	}
+
 	var cutIndex int
 	var deleted bool
 	for i := range products {
@@ -74,15 +105,25 @@ func (r *repository) Delete(id int) (bool, error) {
 	}
 
 	if !deleted {
-		return false, fmt.Errorf("Product wit id %d does not exist", id)
+		return fmt.Errorf("Product wit id %d does not exist", id)
 	}
 
 	products = append(products[:cutIndex], products[cutIndex+1:]...)
 
-	return true, nil
+	if err := r.db.Write(products); err != nil {
+		return err
+	}
+
+	return nil
 }
 
 func (r *repository) UpdateName(id int, name string) (Product, error) {
+
+	err := r.db.Read(&products)
+	if err != nil {
+		return Product{}, err
+	}
+
 	var product Product
 	var updated bool
 
@@ -92,10 +133,10 @@ func (r *repository) UpdateName(id int, name string) (Product, error) {
 			updated = true
 			product = products[i]
 		}
-		if !updated {
-			return Product{}, fmt.Errorf("Product with id %d was NOT updated", id)
-		}
-		return product, nil
-
 	}
+
+	if !updated {
+		return Product{}, fmt.Errorf("Product with id %d was NOT updated", id)
+	}
+	return product, nil
 }
