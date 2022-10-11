@@ -37,6 +37,16 @@ func NewProduct(s products.Service) *Product {
 	}
 }
 
+// Products godoc
+// @Summary  Show the list of products
+// @Tags     Products
+// @Produce  json
+// @Param    token  header    string        true  "Token"
+// @Success  200    {object}  web.Response  "List of products"
+// @Failure  401    {object}  web.Response  "Unauthorized + invalid token"
+// @Failure  500    {object}  web.Response  "Internal server error "
+// @Failure  404    {object}  web.Response  "Not found"
+// @Router   /products [GET]
 func (p *Product) GetAll() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 
@@ -88,6 +98,19 @@ func (p *Product) GetProductByID() gin.HandlerFunc {
 	}
 }
 
+// Update product godoc
+// @Summary  Update a product
+// @Tags     Products
+// @Accept   json
+// @Produce  json
+// @Param    id       path      int             true   "Id product"
+// @Param    token    header    string          true  "Token"
+// @Param    product  body      Request  true   "Product to update"
+// @Success  200      {object}  web.Response
+// @Failure  401      {object}  web.Response
+// @Failure  400      {object}  web.Response
+// @Failure  404      {object}  web.Response
+// @Router   /products/{id} [PUT]
 func (p *Product) Update() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 
@@ -132,7 +155,7 @@ func (p *Product) Update() gin.HandlerFunc {
 			return
 		}
 
-		// TODO validate creation date
+		// TODO middleware to assign a creation date
 
 		product, err := p.service.Update(int(id), req.Name, req.Color, req.Code, req.Price, req.Stock, req.Published, req.CreatedAt)
 		if err != nil {
@@ -144,6 +167,20 @@ func (p *Product) Update() gin.HandlerFunc {
 
 }
 
+// Update a product name godoc
+// @Summary      Update a product name
+// @Tags         Products
+// @Accept       json
+// @Produce      json
+// @Description  This endpoint update the product name
+// @Param        token  header    string            true  "Token"
+// @Param        id     path      int               true  "Product Id"
+// @Param        name   body      NameRequest		true  "Product name"
+// @Success      200    {object}  web.Response
+// @Failure      401    {object}  web.Response
+// @Failure      400    {object}  web.Response
+// @Failure      404    {object}  web.Response
+// @Router       /products/{id} [PATCH]
 func (p *Product) UpdateName() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 
@@ -177,6 +214,17 @@ func (p *Product) UpdateName() gin.HandlerFunc {
 	}
 }
 
+// Save product godoc
+// @Summary  Store a product in db
+// @Tags     Products
+// @Accept   json
+// @Produce  json
+// @Param    token    header    string          true  "Token"
+// @Param    product  body      Request  true  "Product to Store"
+// @Success  200      {object}  web.Response
+// @Failure  401      {object}  web.Response
+// @Failure  400      {object}  web.Response
+// @Router   /products [POST]
 func (p *Product) Save() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 
@@ -218,6 +266,16 @@ func (p *Product) Save() gin.HandlerFunc {
 
 }
 
+// Delete Product
+// @Summary  Delete product
+// @Tags     Products
+// @Param    id     path      int     true  "Product id"
+// @Param    token  header    string  true  "Token"
+// @Success  204
+// @Failure  401    {object}  web.Response
+// @Failure  400    {object}  web.Response
+// @Failure  404    {object}  web.Response
+// @Router   /products/{id} [DELETE]
 func (p *Product) Delete() gin.HandlerFunc {
 	return func(ctx *gin.Context) {
 
