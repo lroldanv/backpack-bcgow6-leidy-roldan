@@ -18,7 +18,7 @@ Meli se basa en el estándar de calidad ISO/IEC 25010  y prioriza cinco de sus p
 
 * Funcionalidad: tiene que ver con el cumplimiento de los requerimientos definidos
   
-* Rendimeinto: tiene que ver con el manejo de recursos (tiempo de ejecución y uso de memoria).
+* Rendimiento: tiene que ver con el manejo de recursos (tiempo de ejecución y uso de memoria).
   
 * Fiabilidad: tiene que ver con la confiablidad del código, se espera que sea poco propenso a errores y que sea pueda recuperar fácilmente en caso de que ocurran. Se podría medir en función de un escenario y tiempo definido.
   
