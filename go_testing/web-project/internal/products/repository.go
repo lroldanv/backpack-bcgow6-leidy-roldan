@@ -4,30 +4,18 @@ import (
 	"fmt"
 	"time"
 
+	"github.com/lroldanv/backpack-bcgow6-leidy-roldan/go_testing/web-project/internal/domain"
 	"github.com/lroldanv/backpack-bcgow6-leidy-roldan/go_testing/web-project/pkg/store"
 )
 
-// TODO: use the Product struct in the domain and rewrite tests
-// Product struct
-type Product struct {
-	ID        int       `json:"id"`
-	Name      string    `json:"name"`
-	Color     string    `json:"color"`
-	Price     float64   `json:"price"`
-	Stock     uint      `json:"stock"`
-	Code      string    `json:"code"`
-	Published bool      `json:"published"`
-	CreatedAt time.Time `json:"createdAt"`
-}
-
 // Global variable to store products
-var products []Product
+var products []domain.Product
 
 type Repository interface {
-	GetAll() ([]Product, error)
-	Save(id int, name, color, code string, price float64, stock uint, published bool, createdAt time.Time) (Product, error)
-	Update(id int, name, color, code string, price float64, stock uint, published bool, createdAt time.Time) (Product, error)
-	UpdateName(id int, name string) (Product, error)
+	GetAll() ([]domain.Product, error)
+	Save(id int, name, color, code string, price float64, stock uint, published bool, createdAt time.Time) (domain.Product, error)
+	Update(id int, name, color, code string, price float64, stock uint, published bool, createdAt time.Time) (domain.Product, error)
+	UpdateName(id int, name string) (domain.Product, error)
 	Delete(id int) error
 }
 
@@ -43,40 +31,40 @@ func NewRepository(db store.Store) Repository {
 }
 
 // Create product
-func (r *repository) Save(id int, name, color, code string, price float64, stock uint, published bool, createdAt time.Time) (Product, error) {
+func (r *repository) Save(id int, name, color, code string, price float64, stock uint, published bool, createdAt time.Time) (domain.Product, error) {
 
-	var products []Product
+	var products []domain.Product
 
 	err := r.db.Read(&products)
 	if err != nil {
-		return Product{}, err
+		return domain.Product{}, err
 	}
 
-	p := Product{id, name, color, price, stock, code, published, createdAt}
+	p := domain.Product{id, name, color, price, stock, code, published, createdAt}
 	products = append(products, p)
 	if err := r.db.Write(products); err != nil {
-		return Product{}, err
+		return domain.Product{}, err
 	}
 	return p, nil
 }
 
-func (r *repository) GetAll() ([]Product, error) {
+func (r *repository) GetAll() ([]domain.Product, error) {
 
 	err := r.db.Read(&products)
 	if err != nil {
-		return []Product{}, err
+		return []domain.Product{}, err
 	}
 	return products, nil
 }
 
-func (r *repository) Update(id int, name, color, code string, price float64, stock uint, published bool, createdAt time.Time) (Product, error) {
+func (r *repository) Update(id int, name, color, code string, price float64, stock uint, published bool, createdAt time.Time) (domain.Product, error) {
 
 	err := r.db.Read(&products)
 	if err != nil {
-		return Product{}, err
+		return domain.Product{}, err
 	}
 
-	p := Product{Name: name, Color: color, Price: price, Stock: stock, Code: code, Published: published, CreatedAt: createdAt}
+	p := domain.Product{Name: name, Color: color, Price: price, Stock: stock, Code: code, Published: published, CreatedAt: createdAt}
 
 	for i, product := range products {
 		if product.ID == id {
@@ -85,8 +73,7 @@ func (r *repository) Update(id int, name, color, code string, price float64, sto
 			return p, nil
 		}
 	}
-	return Product{}, fmt.Errorf("Product with id %d not found", id)
-
+	return domain.Product{}, fmt.Errorf("Product with id %d not found", id)
 }
 
 func (r *repository) Delete(id int) error {
@@ -118,14 +105,14 @@ func (r *repository) Delete(id int) error {
 	return nil
 }
 
-func (r *repository) UpdateName(id int, name string) (Product, error) {
+func (r *repository) UpdateName(id int, name string) (domain.Product, error) {
 
 	err := r.db.Read(&products)
 	if err != nil {
-		return Product{}, err
+		return domain.Product{}, err
 	}
 
-	var product Product
+	var product domain.Product
 	var updated bool
 
 	for i := range products {
@@ -137,7 +124,7 @@ func (r *repository) UpdateName(id int, name string) (Product, error) {
 	}
 
 	if !updated {
-		return Product{}, fmt.Errorf("Product with id %d was NOT updated", id)
+		return domain.Product{}, fmt.Errorf("Product with id %d was NOT updated", id)
 	}
 	return product, nil
 }

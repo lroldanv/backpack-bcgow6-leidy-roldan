@@ -12,7 +12,7 @@ import (
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 
-	"github.com/lroldanv/backpack-bcgow6-leidy-roldan/go-web/web-architecture/internal/products"
+	"github.com/lroldanv/backpack-bcgow6-leidy-roldan/go_testing/web-project/internal/products"
 )
 
 // @title           Bootcamp Go Wave 6 - API
