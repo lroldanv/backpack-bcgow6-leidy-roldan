@@ -40,7 +40,7 @@ func (r *repository) Save(id int, name, color, code string, price float64, stock
 		return domain.Product{}, err
 	}
 
-	p := domain.Product{id, name, color, price, stock, code, published, createdAt}
+	p := domain.Product{ID: id, Name: name, Color: color, Price: price, Stock: stock, Code: code, Published: published, CreatedAt: createdAt}
 	products = append(products, p)
 	if err := r.db.Write(products); err != nil {
 		return domain.Product{}, err
@@ -73,7 +73,7 @@ func (r *repository) Update(id int, name, color, code string, price float64, sto
 			return p, nil
 		}
 	}
-	return domain.Product{}, fmt.Errorf("Product with id %d not found", id)
+	return domain.Product{}, fmt.Errorf("product with id %d not found", id)
 }
 
 func (r *repository) Delete(id int) error {
@@ -93,7 +93,7 @@ func (r *repository) Delete(id int) error {
 	}
 
 	if !deleted {
-		return fmt.Errorf("Product wit id %d does not exist", id)
+		return fmt.Errorf("product with id %d does not exist", id)
 	}
 
 	products = append(products[:cutIndex], products[cutIndex+1:]...)
@@ -124,7 +124,7 @@ func (r *repository) UpdateName(id int, name string) (domain.Product, error) {
 	}
 
 	if !updated {
-		return domain.Product{}, fmt.Errorf("Product with id %d was NOT updated", id)
+		return domain.Product{}, fmt.Errorf("product with id %d was NOT updated", id)
 	}
 	return product, nil
 }

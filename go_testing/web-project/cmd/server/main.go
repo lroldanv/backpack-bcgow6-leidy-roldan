@@ -6,9 +6,9 @@ import (
 
 	"github.com/gin-gonic/gin"
 	"github.com/joho/godotenv"
-	docs "github.com/lroldanv/backpack-bcgow6-leidy-roldan/go-web/web-architecture/cmd/server/docs"
-	"github.com/lroldanv/backpack-bcgow6-leidy-roldan/go-web/web-architecture/cmd/server/handler"
-	"github.com/lroldanv/backpack-bcgow6-leidy-roldan/go-web/web-architecture/pkg/store"
+	docs "github.com/lroldanv/backpack-bcgow6-leidy-roldan/go_testing/web-project/cmd/server/docs"
+	"github.com/lroldanv/backpack-bcgow6-leidy-roldan/go_testing/web-project/cmd/server/handler"
+	"github.com/lroldanv/backpack-bcgow6-leidy-roldan/go_testing/web-project/pkg/store"
 	swaggerFiles "github.com/swaggo/files"
 	ginSwagger "github.com/swaggo/gin-swagger"
 
