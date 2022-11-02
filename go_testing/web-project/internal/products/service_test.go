@@ -146,18 +146,6 @@ func TestServiceIntegrationDeleteOk(t *testing.T) {
 			CreatedAt: time.Time{},
 		},
 	}
-	expectedDatabase := []domain.Product{
-		{
-			ID:        1,
-			Name:      "car",
-			Color:     "red",
-			Price:     0,
-			Stock:     0,
-			Code:      "",
-			Published: false,
-			CreatedAt: time.Time{},
-		},
-	}
 
 	mockStorage := store.MockStorage{
 		DataMock: initialDatabase,
@@ -171,9 +159,7 @@ func TestServiceIntegrationDeleteOk(t *testing.T) {
 
 	// Assert
 	assert.Nil(t, err)
-	assert.Equal(t, expectedDatabase, mockStorage.DataMock)
 }
-
 func TestServiceIntegrationDeleteIdNotFound(t *testing.T) {
 	// Arrange
 	initialDatabase := []domain.Product{

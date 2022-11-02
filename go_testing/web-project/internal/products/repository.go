@@ -124,7 +124,7 @@ func (r *repository) UpdateName(id int, name string) (domain.Product, error) {
 	}
 
 	if !updated {
-		return domain.Product{}, fmt.Errorf("product with id %d was NOT updated", id)
+		return domain.Product{}, fmt.Errorf("error in repository")
 	}
 	return product, nil
 }

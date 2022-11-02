@@ -26,7 +26,7 @@ func (m *MockStorage) Write(data interface{}) (err error) {
 	if m.ErrOnWrite != nil {
 		return m.ErrOnWrite
 	}
-	castedData := data.(*domain.Product)
-	m.DataMock = append(m.DataMock, *castedData)
+	castedData := data.(domain.Product)
+	m.DataMock = append(m.DataMock, castedData)
 	return nil
 }
