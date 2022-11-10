@@ -13,18 +13,16 @@ import (
 func ConnectDatabase() (engine *gin.Engine, db *sql.DB) {
 	err := godotenv.Load()
 	if err != nil {
-		log.Fatal("Error: Loading .env")
+		log.Fatal("Error: Loading .env ", err.Error())
 	}
 
 	configDB := mysql.Config{
 		User:   os.Getenv("DBUSER"),
 		Passwd: os.Getenv("DBPASS"),
-		Net:    "tcp",
-		Addr:   "192.168.111.136.",
 		DBName: os.Getenv("DBNAME"),
 	}
 
-	// db, err := sql.Open("mysql", dataSource) --> dataSource:="user:password@tcp(localhost:3306)/DBName"
+	// db, err := sql.Open("mysql", fmt.Sprintf("%s:%s@/%s", os.Getenv("USERNAME"), os.Getenv("PASSWORD"), os.Getenv("DATABASE")))
 	db, err = sql.Open("mysql", configDB.FormatDSN())
 	if err != nil {
 		log.Fatal(err)

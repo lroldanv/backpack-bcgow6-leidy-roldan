@@ -3,6 +3,7 @@ package product
 import (
 	"context"
 	"database/sql"
+	"fmt"
 	"log"
 
 	"github.com/lroldanv/backpack-bcgow6-leidy-roldan/database-fundamentals/products-api/internal/domain"
@@ -29,7 +30,7 @@ func NewRepository(db *sql.DB) Repository {
 }
 
 const (
-	GET_PRODUCT_BY_NAME = "SELECT id, name, type, count, price FROM products WHERE name=?;"
+	GET_PRODUCT_BY_NAME = "SELECT id, name, type, count, price FROM products WHERE name = ?;"
 	GET_PRODUCT_BY_ID   = "SELECT id, name, type, count, price FROM products WHERE id=?;"
 	SAVE_PRODUCT        = "INSERT INTO products (name, type, count, price) VALUES (?, ?, ?, ?)"
 	EXIST_PRODUCT       = "SELECT products.id  FROM products WHERE products.id=?;"
@@ -44,8 +45,10 @@ func (r *repository) Exists(ctx context.Context, id int) bool {
 func (r *repository) GetByName(ctx context.Context, name string) (domain.Product, error) {
 	row := r.db.QueryRow(GET_PRODUCT_BY_NAME, name)
 	var product domain.Product
-	if err := row.Scan(&product.ID, &product.Name, &product.Type, &product.Count, &product.Price); err != nil {
-		return domain.Product{}, err
+	if err := row.Scan(&product.ID, &product.Name, &product.Type, &product.Count, &product.Price); err == sql.ErrNoRows {
+		return domain.Product{}, fmt.Errorf("there were not rows %s", err.Error()) // it is not really an error, just no rows were found
+	} else {
+		log.Fatal(err)
 	}
 	return product, nil
 }
@@ -53,18 +56,19 @@ func (r *repository) GetByName(ctx context.Context, name string) (domain.Product
 func (r *repository) Store(ctx context.Context, product domain.Product) (domain.Product, error) {
 	stmt, err := r.db.Prepare(SAVE_PRODUCT) // Create a prepared statement for later queries or executions
 	if err != nil {
-		return domain.Product{}, err
+		return domain.Product{}, fmt.Errorf("error preparing the statement: %s", err.Error())
 	}
 	defer stmt.Close() // Close the statement preventing memory leaks
 
 	// Execute the prepared statement with the given arguments
 	result, err := stmt.Exec(product.Name, product.Type, product.Count, product.Price)
 	if err != nil {
-		return domain.Product{}, err
+		return domain.Product{}, fmt.Errorf("error executing the statement: %s", err.Error())
 	}
+
 	insertedId, err := result.LastInsertId()
 	if err != nil {
-		return domain.Product{}, err
+		return domain.Product{}, fmt.Errorf("error bringing the last inserted id: %s", err.Error())
 	}
 	product.ID = int(insertedId)
 
@@ -87,3 +91,20 @@ func (r *repository) GetOne(id int) domain.Product {
 	}
 	return product
 }
+
+// Another way to implement a read query with prepare
+// func (r *repository) GetByName(name string) (domains.Product, error) {
+// 	stmt, err := r.db.Prepare("SELECT id, name, type, count, price FROM products WHERE name = ?;")
+// 	if err != nil {
+// 		return domains.Product{}, fmt.Errorf("error al preparar la consulta - error %v", err)
+// 	}
+// 	defer stmt.Close()
+
+// 	var product domains.Product
+// 	err = stmt.QueryRow(name).Scan(&product.ID, &product.Name, &product.Type, &product.Count, &product.Price)
+// 	if err != nil {
+// 		return domains.Product{}, fmt.Errorf("no registros para %s - error %v", name, err)
+// 	}
+
+// 	return product, nil
+// }

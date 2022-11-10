@@ -2,8 +2,15 @@ package product
 
 import (
 	"context"
+	"errors"
 
 	"github.com/lroldanv/backpack-bcgow6-leidy-roldan/database-fundamentals/products-api/internal/domain"
+)
+
+// Errors
+
+var (
+	ErrNotFound = errors.New("proddut not found")
 )
 
 type Service interface {

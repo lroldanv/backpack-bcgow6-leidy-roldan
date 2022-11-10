@@ -37,7 +37,7 @@ func (r *router) buildProductRoutes() {
 	service := product.NewService(repo)
 	handler := handler.NewProduct(service)
 	//r.rg.GET("/movies", handler.GetAll())
-	r.rg.GET("/products", handler.GetByName())
+	r.rg.GET("/products/", handler.GetByName())
 	//r.rg.POST("/movies", handler.Create())
 	//r.rg.DELETE("/movies/:id", handler.Delete())
 	//r.rg.PATCH("/movies/:id", handler.Update())
