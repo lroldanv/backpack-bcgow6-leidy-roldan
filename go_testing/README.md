@@ -1,5 +1,29 @@
 ## Testing
 
+### Code coverage
+
+Parado en la raíz del proyecto a ejecutar
+
+```cli
+go test -cover ./...
+```
+Para ver el porcentaje de cobertura por función
+```bash
+go tool cover -func coverage.out
+````
+
+Gnerear el coverage report, ejecutar:
+```cli
+go test -cover -coverprofile=coverage.out  ./...
+```
+Mostrar en el navegador el coverage report generado, ejecutar:
+
+```cli
+go tool cover -html=coverage.out
+```
+
+
+
 * ¿Cuáles son las diferencias entre White Box y Black Box? 
   
   En el black box solo se conoce las entradas y salidas del sistema, se desconoce por completo el cómo, solo el qué. Mientras que en el white box se conoce el funcionamiento interno (el ódigo es visible), esto hace el proceso de testing más complicado ya que se debe contemplar las casuísticas de cada unidad y las relaciones entre unidades (tests unitarios y tests de integración).

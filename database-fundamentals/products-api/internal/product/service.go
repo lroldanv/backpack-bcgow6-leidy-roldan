@@ -10,12 +10,14 @@ import (
 // Errors
 
 var (
-	ErrNotFound = errors.New("proddut not found")
+	ErrNotFound             = errors.New("product not found")
+	ErrProductAlreadyExists = errors.New(" product already exists")
 )
 
 type Service interface {
 	GetByName(ctx context.Context, name string) (domain.Product, error)
 	Store(ctx context.Context, product domain.Product) (domain.Product, error)
+	Delete(ctx context.Context, id int) error
 }
 
 type service struct {
@@ -37,10 +39,16 @@ func (s *service) GetByName(ctx context.Context, name string) (domain.Product, e
 }
 
 func (s *service) Store(ctx context.Context, p domain.Product) (domain.Product, error) {
+	if s.repo.Exists(ctx, p.ID) {
+		return domain.Product{}, ErrProductAlreadyExists
+	}
 	product, err := s.repo.Store(ctx, p)
 	if err != nil {
 		return domain.Product{}, err
 	}
 	p.ID = product.ID
 	return p, nil
+}
+func (s *service) Delete(ctx context.Context, id int) error {
+	return s.repo.Delete(ctx, id)
 }

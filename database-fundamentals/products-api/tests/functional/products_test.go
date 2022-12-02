@@ -8,6 +8,7 @@ import (
 	"testing"
 
 	"github.com/gin-gonic/gin"
+	"github.com/joho/godotenv"
 	"github.com/lroldanv/backpack-bcgow6-leidy-roldan/database-fundamentals/products-api/cmd/server/handler"
 	"github.com/lroldanv/backpack-bcgow6-leidy-roldan/database-fundamentals/products-api/internal/domain"
 	"github.com/lroldanv/backpack-bcgow6-leidy-roldan/database-fundamentals/products-api/internal/product"
@@ -16,6 +17,12 @@ import (
 	"github.com/stretchr/testify/require"
 )
 
+func init() {
+	err := godotenv.Load("./../../.env")
+	if err != nil {
+		panic("can't connect to database")
+	}
+}
 func TestStoreProductOk(t *testing.T) {
 	new := domain.Product{
 		Name:  "producto nuevo",

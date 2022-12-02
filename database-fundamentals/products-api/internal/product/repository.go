@@ -3,6 +3,7 @@ package product
 import (
 	"context"
 	"database/sql"
+	"errors"
 	"fmt"
 	"log"
 
@@ -17,6 +18,7 @@ type Repository interface {
 	Store(ctx context.Context, product domain.Product) (domain.Product, error)
 	Exists(ctx context.Context, id int) bool
 	GetOne(id int) domain.Product
+	Delete(ctx context.Context, id int) error
 }
 
 type repository struct {
@@ -32,8 +34,9 @@ func NewRepository(db *sql.DB) Repository {
 const (
 	GET_PRODUCT_BY_NAME = "SELECT id, name, type, count, price FROM products WHERE name = ?;"
 	GET_PRODUCT_BY_ID   = "SELECT id, name, type, count, price FROM products WHERE id=?;"
-	SAVE_PRODUCT        = "INSERT INTO products (name, type, count, price) VALUES (?, ?, ?, ?)"
+	SAVE_PRODUCT        = "INSERT INTO products (name, type, count, price) VALUES (?, ?, ?, ?);"
 	EXIST_PRODUCT       = "SELECT products.id  FROM products WHERE products.id=?;"
+	DELETE_PRODUCT      = "DELETE FROM products WHERE id=?;"
 )
 
 func (r *repository) Exists(ctx context.Context, id int) bool {
@@ -92,19 +95,43 @@ func (r *repository) GetOne(id int) domain.Product {
 	return product
 }
 
-// Another way to implement a read query with prepare
-// func (r *repository) GetByName(name string) (domains.Product, error) {
-// 	stmt, err := r.db.Prepare("SELECT id, name, type, count, price FROM products WHERE name = ?;")
-// 	if err != nil {
-// 		return domains.Product{}, fmt.Errorf("error al preparar la consulta - error %v", err)
-// 	}
-// 	defer stmt.Close()
+func (r *repository) GetByName_Prepare(name string) (domain.Product, error) {
+	stmt, err := r.db.Prepare("SELECT id, name, type, count, price FROM products WHERE name = ?;")
+	if err != nil {
+		return domain.Product{}, fmt.Errorf("error al preparar la consulta - error %v", err)
+	}
+	defer stmt.Close()
 
-// 	var product domains.Product
-// 	err = stmt.QueryRow(name).Scan(&product.ID, &product.Name, &product.Type, &product.Count, &product.Price)
-// 	if err != nil {
-// 		return domains.Product{}, fmt.Errorf("no registros para %s - error %v", name, err)
-// 	}
+	var product domain.Product
+	err = stmt.QueryRow(name).Scan(&product.ID, &product.Name, &product.Type, &product.Count, &product.Price)
+	if err != nil {
+		return domain.Product{}, fmt.Errorf("no registros para %s - error %v", name, err)
+	}
 
-// 	return product, nil
-// }
+	return product, nil
+}
+
+func (r *repository) Delete(ctx context.Context, id int) error {
+	stmt, err := r.db.Prepare(DELETE_PRODUCT)
+	if err != nil {
+		return err
+	}
+	defer stmt.Close()
+
+	result, err := stmt.Exec(id)
+	if err != nil {
+		return err
+	}
+
+	affected, err := result.RowsAffected()
+	if err != nil {
+		return err
+	}
+
+	if affected != 1 {
+		return errors.New("error: there were not affected rows")
+
+	}
+
+	return nil
+}
