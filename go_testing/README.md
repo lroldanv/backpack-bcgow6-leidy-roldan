@@ -7,15 +7,14 @@ Parado en la raíz del proyecto a ejecutar
 ```cli
 go test -cover ./...
 ```
-Para ver el porcentaje de cobertura por función
-```bash
-go tool cover -func coverage.out
-````
-
 Gnerear el coverage report, ejecutar:
 ```cli
 go test -cover -coverprofile=coverage.out  ./...
 ```
+Para ver el porcentaje de cobertura por función
+```bash
+go tool cover -func coverage.out
+````
 Mostrar en el navegador el coverage report generado, ejecutar:
 
 ```cli
